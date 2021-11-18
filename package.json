@@ -8,7 +8,9 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
+    "@types/lodash": "4.14.177",
     "hilojs": "2.0.2",
+    "lodash": "4.17.21",
     "parcel-bundler": "^1.6.1"
   },
   "devDependencies": {

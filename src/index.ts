@@ -1,34 +1,60 @@
 import Hilo from "hilojs";
+import _ from "lodash";
 import Asset from "./asset";
 import { getRotateAngle } from "./utils";
 
+// 移除相同目标ID的动画
+const removeTweenMove = (id: string) => {
+  if (Hilo && Hilo.Tween) {
+    // @ts-ignore
+    const tweens = Hilo.Tween._tweens.filter((item) => {
+      return item.target.id === id;
+    });
+
+    Hilo.Tween.remove(tweens);
+  }
+};
+
+// 等级映射
+const levelMap = {
+  "1": 10,
+  "2": 20,
+  "3": 30,
+  "4": 40,
+  "5": 50
+};
+
 interface GameType {
-  init: () => void;
-  asset?: any;
-  initStage: () => void;
   width: number;
   height: number;
+  speed: number;
+  count: number;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+
+  asset?: any;
   stage: Hilo.Stage | null;
   ticker: Hilo.Ticker | null;
-  speed: number;
-
   bg?: Hilo.View;
   fish?: Hilo.View;
 
-  onUserInput: (e: MouseEvent) => void;
-  initFish: () => void;
+  initStage: () => void;
   initBackground: () => void;
+  initFish: () => void;
+  onUserInput: (e: MouseEvent) => void;
+  onFishMoveCompletion: () => void;
+  init: () => void;
 }
 
 const game: GameType = {
   width: 1280,
   height: 720,
+  speed: 400,
+  count: 0,
+  level: 1,
 
   stage: null,
   fish: undefined,
   ticker: null,
-
-  speed: 400,
 
   init: function () {
     // @ts-ignore
@@ -88,6 +114,7 @@ const game: GameType = {
 
     this.stage?.addChild(this.bg);
   },
+
   initFish: function () {
     // 动画纹理帧
     const atlas = new Hilo.TextureAtlas({
@@ -151,6 +178,7 @@ const game: GameType = {
       const distance = Math.sqrt(absX * absX + absY * absY);
       const duration = (distance * 1000) / speed;
 
+      removeTweenMove("fish");
       Hilo.Tween.to(
         this.fish,
         {
@@ -159,12 +187,32 @@ const game: GameType = {
         },
         {
           duration: duration,
-          onComplete: function () {
-            console.log("移动完成");
+          onComplete: () => {
+            this.onFishMoveCompletion();
           }
         }
       );
     }
+  },
+
+  onFishMoveCompletion() {
+    console.log("移动成功");
+    console.log(this.level);
+    if (this.level > 5) return;
+    // @ts-ignore
+    if (this.count <= levelMap[this.level + ""]) {
+      this.count++;
+
+      // @ts-ignore
+      if (this.count > levelMap[this.level + ""]) {
+        this.count = 1;
+        this.level++;
+      }
+    }
+
+    console.log(this.level, this.count);
+    // TODO: 等级处理
+    // const keys = _.keysIn(Hilo.Tween);
   }
 };
 
