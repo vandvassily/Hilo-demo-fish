@@ -1,0 +1,21 @@
+{
+  "name": "hilo-demo-fish",
+  "version": "1.0.0",
+  "description": "Hilo demo",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "hilojs": "2.0.2",
+    "parcel-bundler": "^1.6.1"
+  },
+  "devDependencies": {
+    "typescript": "4.4.4"
+  },
+  "resolutions": {
+    "@babel/preset-env": "7.13.8"
+  },
+  "keywords": []
+}
